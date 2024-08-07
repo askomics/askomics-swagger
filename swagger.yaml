@@ -1,94 +1,172 @@
 ---
 swagger: "2.0"
 info:
-  description: "This is a sample server Petstore server.  You can find out more about\
-    \ Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).\
-    \  For this sample, you can use the api key `special-key` to test the authorization\
-    \ filters."
-  version: "1.0.5"
-  title: "Swagger Petstore"
-  termsOfService: "http://swagger.io/terms/"
+  description: "Swagger for [AskOmics](https://github.com/askomics/flaskomics) API. Current version: 4.5.0"
+  title: "AskOmics Swagger"
   contact:
-    email: "apiteam@swagger.io"
+    email: "askomics@irisa.fr"
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "petstore.swagger.io"
-basePath: "/v2"
+    name: "AGPL-3.0 license"
+    url: "https://github.com/askomics/flaskomics#AGPL-3.0-1-ov-file"
+host: "https://test.askomics.org"
+basePath: "/api"
 tags:
-- name: "pet"
-  description: "Everything about your Pets"
-  externalDocs:
-    description: "Find out more"
-    url: "http://swagger.io"
-- name: "store"
-  description: "Access to Petstore orders"
-- name: "user"
-  description: "Operations about user"
-  externalDocs:
-    description: "Find out more about our store"
-    url: "http://swagger.io"
+- name: "Start"
+  description: "AskOmics starting route. Mostly display logged user information and AskOmics instance configuration"
+- name: "Auth"
+  description: "Everything related to authentication"
+- name: "File"
+  description: "Everything related to files"
+- name: "Dataset"
+  description: "Everything related to datasets"
+- name: "Query"
+  description: "Everything related to json-driven queries"
+- name: "Sparql"
+  description: "Everything related to SPARQL queries"
+- name: "Results"
+  description: "Everything related to results"
+- name: "Data"
+  description: "Everything related to URI data"
+- name: "Ontologies"
+  description: "Everything related to ontologies"
+- name: "Galaxy"
+  description: "Everything related to Galaxy"
+- name: "Admin"
+  description: "Everything related to administration"
 schemes:
 - "https"
 - "http"
 paths:
-  /pet/{petId}/uploadImage:
-    post:
+  /start:
+    get:
       tags:
-      - "pet"
-      summary: "uploads an image"
-      description: ""
+      - "Start"
+      summary: "Get starting configuration"
+      description: "Get information regarding to AskOmics configuration, and logged user"
       operationId: "uploadFile"
-      consumes:
-      - "multipart/form-data"
       produces:
       - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to update"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "additionalMetadata"
-        in: "formData"
-        description: "Additional data to pass to server"
-        required: false
-        type: "string"
-      - name: "file"
-        in: "formData"
-        description: "file to upload"
-        required: false
-        type: "file"
       responses:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/ApiResponse"
+            type: "object"
+            properties:
+              config:
+                type: "object"
+                properties:
+                  footerMessage:
+                    type: string
+                    description: "Footer message to display"
+                  frontMessage:
+                    type: string
+                    description: "Message to display on the front page"
+                  contactMessage:
+                    type: string
+                    description: "Message to display on the contact page"
+                  version:
+                    type: string
+                    description: "AskOmics version"
+                  commit:
+                    type: string
+                    description: "Current AskOmics commit"
+                  gitUrl:
+                    type: string
+                    description: "URL to AskOmics github"
+                  disableAccountCreation:
+                    type: boolean
+                    description: "Is account creation disabled?"
+                  disableIntegration:
+                    type: boolean
+                    description: "Is file integration disabled to non-admin"
+                  protectPublic:
+                    type: boolean
+                    description: "Is public querying disabled?"
+                  passwordResetLink:
+                    type: string
+                    description: "Custom password reset link (if not using internal accounts)"
+                  accountLink:
+                    type: string
+                    description: "Custom login link (if not using internal accounts)"
+                  namespaceData:
+                    type: string
+                    description: "Data SPARQL namespace"
+                  namespaceInternal:
+                    type: string
+                    description: "Internal SPARQL namespace"
+                  proxyPath:
+                    type: string
+                    description: "Internal SPARQL namespace"
+                  user:
+                    type: object
+                    description: "Logged user information"
+                  logged:
+                    type: boolean
+                  ontologies:
+                    type: list
+                    description: "List of available ontologies"
+                  singleTenant:
+                    type: boolean
+                    description: "Is single tenant mode activated?"
+                  autocompleteMaxResults:
+                    type: integer
+                    description: "Max number of autocompletion results for ontological terms"
+                  anonymousQuery:
+                    type: boolean
+                    description: "Are extended anonymous queries allowed?"
+              error:
+                type: boolean
+              errorMessage:
+                type: string
       security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet:
+      - {}
+      - api_key: []
+  /auth/signup:
     post:
       tags:
-      - "pet"
-      summary: "Add a new pet to the store"
+      - "Auth"
+      summary: "Request a new account"
       description: ""
-      operationId: "addPet"
       consumes:
       - "application/json"
-      - "application/xml"
       produces:
       - "application/json"
-      - "application/xml"
       parameters:
       - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
+        name: "fname"
+        description: "First name"
         required: true
         schema:
-          $ref: "#/definitions/Pet"
+          type: string
+      - in: "body"
+        name: "lname"
+        description: "Last name"
+        required: true
+        schema:
+          type: string
+      - in: "body"
+        name: "username"
+        required: true
+        schema:
+          type: string
+      - in: "body"
+        name: "email"
+        description: "Email adress"
+        required: true
+        schema:
+          type: string
+      - in: "body"
+        name: "password"
+        description: "Password"
+        required: true
+        schema:
+          type: string
+      - in: "body"
+        name: "passwordconf"
+        description: "Password confirmation"
+        required: true
+        schema:
+          type: string
       responses:
         405:
           description: "Invalid input"
@@ -584,135 +662,5 @@ paths:
 securityDefinitions:
   api_key:
     type: "apiKey"
-    name: "api_key"
+    name: "X-API-KEY"
     in: "header"
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "https://petstore.swagger.io/oauth/authorize"
-    flow: "implicit"
-    scopes:
-      read:pets: "read your pets"
-      write:pets: "modify pets in your account"
-definitions:
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
-  Category:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Category"
-  Pet:
-    type: "object"
-    required:
-    - "name"
-    - "photoUrls"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      category:
-        $ref: "#/definitions/Category"
-      name:
-        type: "string"
-        example: "doggie"
-      photoUrls:
-        type: "array"
-        xml:
-          wrapped: true
-        items:
-          type: "string"
-          xml:
-            name: "photoUrl"
-      tags:
-        type: "array"
-        xml:
-          wrapped: true
-        items:
-          xml:
-            name: "tag"
-          $ref: "#/definitions/Tag"
-      status:
-        type: "string"
-        description: "pet status in the store"
-        enum:
-        - "available"
-        - "pending"
-        - "sold"
-    xml:
-      name: "Pet"
-  Tag:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Tag"
-  Order:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      petId:
-        type: "integer"
-        format: "int64"
-      quantity:
-        type: "integer"
-        format: "int32"
-      shipDate:
-        type: "string"
-        format: "date-time"
-      status:
-        type: "string"
-        description: "Order Status"
-        enum:
-        - "placed"
-        - "approved"
-        - "delivered"
-      complete:
-        type: "boolean"
-    xml:
-      name: "Order"
-  User:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      username:
-        type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
