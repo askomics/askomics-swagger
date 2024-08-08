@@ -13,9 +13,9 @@ basePath: "/api"
 tags:
 - name: "Start"
   description: "AskOmics instance configuration"
-- name: "File"
+- name: "Files"
   description: "Everything related to files"
-- name: "Dataset"
+- name: "Datasets"
   description: "Everything related to datasets"
 - name: "Sparql"
   description: "Everything related to SPARQL queries"
@@ -166,12 +166,14 @@ paths:
         name:  id
         description: "File id"
         required: true
-        type: integer
+        schema:
+          type: integer
       - in: body
         name:  newName
         description: "New file name"
         required: true
-        type: string
+        schema:
+          type: string
       responses:
         200:
           description: "Successful request"
@@ -230,17 +232,20 @@ paths:
       - in: body
         name:  first
         description: "Is this the first chunk"
-        type: boolean
+        schema:
+          type: boolean
         required: true
       - in: body
         name:  last
         description: "Is this the last chunk"
-        type: boolean
+        schema:
+          type: boolean
         required: true
       - in: body
         name:  size
         description: "File size, in bytes"
-        type: integer
+        schema:
+          type: integer
         required: true
       - in: body
         name:  name
@@ -290,7 +295,6 @@ paths:
       - in: body
         name:  url
         description: "Remote url"
-        type: string
         required: true
       responses:
         200:
@@ -321,14 +325,15 @@ paths:
       - in: body
         name:  filesId
         description: "Files Ids"
-        type: array
+        schema:
+          type: array
         required: true
       responses:
         200:
           description: "Successful request"
           schema:
             type: object
-            properties:
+            items:
               previewFiles:
                 type: array
                 description: Array of previews for requested files Ids
@@ -355,14 +360,15 @@ paths:
       - in: body
         name:  filesIdToDelete
         description: "Files Ids to delete"
-        type: array
+        schema:
+          type: array
         required: true
       responses:
         200:
           description: "Successful request"
           schema:
             type: object
-            properties:
+            items:
               files:
                 type: array
                 description: Remaining files
@@ -389,54 +395,53 @@ paths:
       - in: body
         name:  fileId
         description: "Id of the file to integrate"
-        type: string
         required: true
       - in: body
         name:  public
         description: "Set the dataset public? (Restricted to admin users)"
-        type: boolean
+        schema:
+          type: boolean
         required: false
       - in: body
         name:  externalEndpoint
         description: "External endpoint, for RDF files"
-        type: string
         required: false
       - in: body
         name:  externalGraph
         description: "External graph, for RDF files"
-        type: string
         required: false
       - in: body
         name:  customUri
         description: "Custom URI, for non-RDF files"
-        type: string
         required: false
       - in: body
         name:  column_types
         description: "List of column type (for CSV files)"
-        type: array
+        schema:
+          type: array
         required: false
       - in: body
         name:  header_names
         description: "List of column names (for CSV files)"
-        type: array
+        schema:
+          type: array
         required: false
       - in: body
         name:  entities
         description: "List of entity names (for GFF files)"
-        type: array
+        schema:
+          type: array
         required: false
       - in: body
         name:  entity_name
         description: "Entity name (for BED files)"
-        type: string
         required: false
       responses:
         200:
           description: "Successful request"
           schema:
             type: object
-            properties:
+            items:
               dataset_ids:
                 type: array
                 description: Generated dataset ids
@@ -483,10 +488,8 @@ paths:
           description: "Successful request"
           content:
             description: "A ttl file"
-            text/turtle:
-              schema:
-                type: string
-                format: binary
+            schema:
+              type: file
         401:
           description: "Login required / invalid account / blocked account"
       security:
@@ -503,7 +506,7 @@ paths:
           description: "Successful request"
           schema:
             type: object
-            properties:
+            items:
               types:
                 type: array
                 description: List of column types
@@ -521,46 +524,47 @@ paths:
             type: object
             properties:
               datasets:
-                type: array
                 description: List of datasets
-                items:
-                  type: "object"
-                  properties:
-                    name:
-                      type: "string"
-                      description: "Dataset name"
-                    id:
-                      type: "integer"
-                      description: "Dataset ID"
-                    start:
-                      type: "integer"
-                      description: "Unix time of the start of the integration"
-                    end:
-                      type: "integer"
-                      description: "Unix time of the end of the integration"
-                    exec_time:
-                      type: "integer"
-                      description: "Integration time"
-                    ntriples:
-                      type: "integer"
-                      description: "Number of generater triples"
-                    ontology:
-                      type: "integer"
-                      description: "Is the dataset an ontology? (0 or 1)"
-                    public:
-                      type: "boolean"
-                      description: "Is the dataset public?"
-                    percent:
-                      type: "integer"
-                      description: "% of the file integrated"
-                    status:
-                      type: "string"
-                      description: "Dataset status"
-                    error_message:
-                      type: "string"
-                      description: "Error message"
-                    traceback:
-                      type: "string"
+                schema:
+                  type: array
+                  items:
+                    type: "object"
+                    properties:
+                      name:
+                        type: "string"
+                        description: "Dataset name"
+                      id:
+                        type: "integer"
+                        description: "Dataset ID"
+                      start:
+                        type: "integer"
+                        description: "Unix time of the start of the integration"
+                      end:
+                        type: "integer"
+                        description: "Unix time of the end of the integration"
+                      exec_time:
+                        type: "integer"
+                        description: "Integration time"
+                      ntriples:
+                        type: "integer"
+                        description: "Number of generater triples"
+                      ontology:
+                        type: "integer"
+                        description: "Is the dataset an ontology? (0 or 1)"
+                      public:
+                        type: "boolean"
+                        description: "Is the dataset public?"
+                      percent:
+                        type: "integer"
+                        description: "% of the file integrated"
+                      status:
+                        type: "string"
+                        description: "Dataset status"
+                      error_message:
+                        type: "string"
+                        description: "Error message"
+                      traceback:
+                        type: "string"
               error:
                 type: boolean
               errorMessage:
@@ -579,14 +583,15 @@ paths:
       - in: body
         name:  datasetsIdToDelete
         description: "Datasets Ids to delete"
-        type: array
+        schema:
+          type: array
         required: true
       responses:
         200:
           description: "Successful request"
           schema:
             type: object
-            properties:
+            items:
               datasets:
                 type: array
                 description: Remaining datasets
@@ -612,14 +617,13 @@ paths:
       - in: body
         name:  id
         description: "Dataset ID to toggle"
-        type: string
         required: true
       responses:
         200:
           description: "Successful request"
           schema:
             type: object
-            properties:
+            items:
               datasets:
                 type: array
                 description: Array of datasets
