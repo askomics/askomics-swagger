@@ -8,31 +8,21 @@ info:
   license:
     name: "AGPL-3.0 license"
     url: "https://github.com/askomics/flaskomics#AGPL-3.0-1-ov-file"
-host: "https://test.askomics.org"
+host: "test.askomics.org"
 basePath: "/api"
 tags:
 - name: "Start"
-  description: "AskOmics starting route. Mostly display logged user information and AskOmics instance configuration"
-- name: "Auth"
-  description: "Everything related to authentication"
+  description: "AskOmics instance configuration"
 - name: "File"
   description: "Everything related to files"
 - name: "Dataset"
   description: "Everything related to datasets"
-- name: "Query"
-  description: "Everything related to json-driven queries"
 - name: "Sparql"
   description: "Everything related to SPARQL queries"
 - name: "Results"
   description: "Everything related to results"
 - name: "Data"
   description: "Everything related to URI data"
-- name: "Ontologies"
-  description: "Everything related to ontologies"
-- name: "Galaxy"
-  description: "Everything related to Galaxy"
-- name: "Admin"
-  description: "Everything related to administration"
 schemes:
 - "https"
 - "http"
@@ -43,622 +33,605 @@ paths:
       - "Start"
       summary: "Get starting configuration"
       description: "Get information regarding to AskOmics configuration, and logged user"
-      operationId: "uploadFile"
       produces:
       - "application/json"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful request"
           schema:
             type: "object"
             properties:
               config:
                 type: "object"
-                properties:
-                  footerMessage:
-                    type: string
-                    description: "Footer message to display"
-                  frontMessage:
-                    type: string
-                    description: "Message to display on the front page"
-                  contactMessage:
-                    type: string
-                    description: "Message to display on the contact page"
-                  version:
-                    type: string
-                    description: "AskOmics version"
-                  commit:
-                    type: string
-                    description: "Current AskOmics commit"
-                  gitUrl:
-                    type: string
-                    description: "URL to AskOmics github"
-                  disableAccountCreation:
-                    type: boolean
-                    description: "Is account creation disabled?"
-                  disableIntegration:
-                    type: boolean
-                    description: "Is file integration disabled to non-admin"
-                  protectPublic:
-                    type: boolean
-                    description: "Is public querying disabled?"
-                  passwordResetLink:
-                    type: string
-                    description: "Custom password reset link (if not using internal accounts)"
-                  accountLink:
-                    type: string
-                    description: "Custom login link (if not using internal accounts)"
-                  namespaceData:
-                    type: string
-                    description: "Data SPARQL namespace"
-                  namespaceInternal:
-                    type: string
-                    description: "Internal SPARQL namespace"
-                  proxyPath:
-                    type: string
-                    description: "Internal SPARQL namespace"
-                  user:
-                    type: object
-                    description: "Logged user information"
-                  logged:
-                    type: boolean
-                  ontologies:
-                    type: list
-                    description: "List of available ontologies"
-                  singleTenant:
-                    type: boolean
-                    description: "Is single tenant mode activated?"
-                  autocompleteMaxResults:
-                    type: integer
-                    description: "Max number of autocompletion results for ontological terms"
-                  anonymousQuery:
-                    type: boolean
-                    description: "Are extended anonymous queries allowed?"
               error:
                 type: boolean
               errorMessage:
                 type: string
       security:
+      - api_key: []
       - {}
-      - api_key: []
-  /auth/signup:
-    post:
-      tags:
-      - "Auth"
-      summary: "Request a new account"
-      description: ""
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "fname"
-        description: "First name"
-        required: true
-        schema:
-          type: string
-      - in: "body"
-        name: "lname"
-        description: "Last name"
-        required: true
-        schema:
-          type: string
-      - in: "body"
-        name: "username"
-        required: true
-        schema:
-          type: string
-      - in: "body"
-        name: "email"
-        description: "Email adress"
-        required: true
-        schema:
-          type: string
-      - in: "body"
-        name: "password"
-        description: "Password"
-        required: true
-        schema:
-          type: string
-      - in: "body"
-        name: "passwordconf"
-        description: "Password confirmation"
-        required: true
-        schema:
-          type: string
-      responses:
-        405:
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    put:
-      tags:
-      - "pet"
-      summary: "Update an existing pet"
-      description: ""
-      operationId: "updatePet"
-      consumes:
-      - "application/json"
-      - "application/xml"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
-        required: true
-        schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-        405:
-          description: "Validation exception"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByStatus:
+  /files:
     get:
       tags:
-      - "pet"
-      summary: "Finds Pets by status"
-      description: "Multiple status values can be provided with comma separated strings"
-      operationId: "findPetsByStatus"
+      - "Files"
+      summary: "Get user files"
+      description: "List user files"
       produces:
       - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "status"
-        in: "query"
-        description: "Status values that need to be considered for filter"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-          enum:
-          - "available"
-          - "pending"
-          - "sold"
-          default: "available"
-        collectionFormat: "multi"
       responses:
         200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid status value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByTags:
-    get:
-      tags:
-      - "pet"
-      summary: "Finds Pets by tags"
-      description: "Multiple tags can be provided with comma separated strings. Use\
-        \ tag1, tag2, tag3 for testing."
-      operationId: "findPetsByTags"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "tags"
-        in: "query"
-        description: "Tags to filter by"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-        collectionFormat: "multi"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid tag value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-      deprecated: true
-  /pet/{petId}:
-    get:
-      tags:
-      - "pet"
-      summary: "Find pet by ID"
-      description: "Returns a single pet"
-      operationId: "getPetById"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to return"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Pet"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-      security:
-      - api_key: []
-    post:
-      tags:
-      - "pet"
-      summary: "Updates a pet in the store with form data"
-      description: ""
-      operationId: "updatePetWithForm"
-      consumes:
-      - "application/x-www-form-urlencoded"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet that needs to be updated"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "name"
-        in: "formData"
-        description: "Updated name of the pet"
-        required: false
-        type: "string"
-      - name: "status"
-        in: "formData"
-        description: "Updated status of the pet"
-        required: false
-        type: "string"
-      responses:
-        405:
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    delete:
-      tags:
-      - "pet"
-      summary: "Deletes a pet"
-      description: ""
-      operationId: "deletePet"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "api_key"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "petId"
-        in: "path"
-        description: "Pet id to delete"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Pet not found"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /store/order:
-    post:
-      tags:
-      - "store"
-      summary: "Place an order for a pet"
-      description: ""
-      operationId: "placeOrder"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "order placed for purchasing the pet"
-        required: true
-        schema:
-          $ref: "#/definitions/Order"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid Order"
-  /store/order/{orderId}:
-    get:
-      tags:
-      - "store"
-      summary: "Find purchase order by ID"
-      description: "For valid response try integer IDs with value >= 1 and <= 10.\
-        \ Other values will generated exceptions"
-      operationId: "getOrderById"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "orderId"
-        in: "path"
-        description: "ID of pet that needs to be fetched"
-        required: true
-        type: "integer"
-        maximum: 10
-        minimum: 1
-        format: "int64"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Order not found"
-    delete:
-      tags:
-      - "store"
-      summary: "Delete purchase order by ID"
-      description: "For valid response try integer IDs with positive integer value.\
-        \ Negative or non-integer values will generate API errors"
-      operationId: "deleteOrder"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "orderId"
-        in: "path"
-        description: "ID of the order that needs to be deleted"
-        required: true
-        type: "integer"
-        minimum: 1
-        format: "int64"
-      responses:
-        400:
-          description: "Invalid ID supplied"
-        404:
-          description: "Order not found"
-  /store/inventory:
-    get:
-      tags:
-      - "store"
-      summary: "Returns pet inventories by status"
-      description: "Returns a map of status codes to quantities"
-      operationId: "getInventory"
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        200:
-          description: "successful operation"
+          description: "Successful request"
           schema:
             type: "object"
-            additionalProperties:
-              type: "integer"
-              format: "int32"
+            properties:
+              files:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    date:
+                      type: "integer"
+                      description: "Upload date (unix timestamp)"
+                    id:
+                      type: "integer"
+                    name:
+                      type: "string"
+                      description: "Filename"
+                    preview:
+                      type: "object"
+                      description: "File preview, depends on the type"
+                    preview_error:
+                      type: "string"
+                    size:
+                      type: "integer"
+                    status:
+                      type: "string"
+                    type:
+                      type: string
+                      description: "File type"
+              diskSpace:
+                type: "integer"
+                description: "Remaining available quota"
+              error:
+                type: boolean
+              errorMessage:
+                type: string
       security:
       - api_key: []
-  /user/createWithArray:
     post:
       tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithArrayInput"
+      - "Files"
+      summary: "Get user files"
+      description: "List user files, restricted to a list of ids"
       consumes:
       - "application/json"
       produces:
       - "application/json"
-      - "application/xml"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
+      - in: body
+        name:  filesId
         required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/createWithList:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithListInput"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/{username}:
-    get:
-      tags:
-      - "user"
-      summary: "Get user by user name"
-      description: ""
-      operationId: "getUserByName"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
-        required: true
-        type: "string"
       responses:
         200:
-          description: "successful operation"
+          description: "Successful request"
           schema:
-            $ref: "#/definitions/User"
-        400:
-          description: "Invalid username supplied"
-        404:
-          description: "User not found"
-    put:
-      tags:
-      - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "name that need to be updated"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-      responses:
-        400:
-          description: "Invalid user supplied"
-        404:
-          description: "User not found"
-    delete:
-      tags:
-      - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be deleted"
-        required: true
-        type: "string"
-      responses:
-        400:
-          description: "Invalid username supplied"
-        404:
-          description: "User not found"
-  /user/login:
-    get:
-      tags:
-      - "user"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
-        required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "successful operation"
-          headers:
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-          schema:
-            type: "string"
-        400:
-          description: "Invalid username/password supplied"
-  /user/logout:
-    get:
-      tags:
-      - "user"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logoutUser"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters: []
-      responses:
-        default:
-          description: "successful operation"
-  /user:
+            type: "object"
+            properties:
+              files:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    date:
+                      type: "integer"
+                      description: "Upload date (unix timestamp)"
+                    id:
+                      type: "integer"
+                    name:
+                      type: "string"
+                      description: "Filename"
+                    preview:
+                      type: "object"
+                      description: "File preview, depends on the type"
+                    preview_error:
+                      type: "string"
+                    size:
+                      type: "integer"
+                    status:
+                      type: "string"
+                    type:
+                      type: string
+                      description: "File type"
+              diskSpace:
+                type: "integer"
+                description: "Remaining available quota"
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+      security:
+      - api_key: []
+
+  /files/editname:
     post:
       tags:
-      - "user"
-      summary: "Create user"
-      description: "This can only be done by the logged in user."
-      operationId: "createUser"
+      - "Files"
+      summary: "Update file name"
       consumes:
       - "application/json"
       produces:
       - "application/json"
-      - "application/xml"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "Created user object"
+      - in: body
+        name:  id
+        description: "File id"
         required: true
-        schema:
-          $ref: "#/definitions/User"
+        type: integer
+      - in: body
+        name:  newName
+        description: "New file name"
+        required: true
+        type: string
       responses:
-        default:
-          description: "successful operation"
+        200:
+          description: "Successful request"
+          schema:
+            type: "object"
+            properties:
+              files:
+                type: "array"
+                description: "List of user files"
+                items:
+                  type: "object"
+                  properties:
+                    date:
+                      type: "integer"
+                      description: "Upload date (unix timestamp)"
+                    id:
+                      type: "integer"
+                    name:
+                      type: "string"
+                      description: "Filename"
+                    preview:
+                      type: "object"
+                      description: "File preview, depends on the type"
+                    preview_error:
+                      type: "string"
+                    size:
+                      type: "integer"
+                    status:
+                      type: "string"
+                    type:
+                      type: string
+                      description: "File type"
+              diskSpace:
+                type: "integer"
+                description: "Remaining available quota"
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Missing parameters"
+      security:
+      - api_key: []
+
+  /files/upload_chunk:
+    post:
+      tags:
+      - "Files"
+      summary: "Update file chunk"
+      description: "Endpoint to upload file. Files need to be chunked if > 10Mo. See [here](https://github.com/askomics/askoclics/blob/37c8c854bdddbe15fb247d49aa7e419f22727cd5/askoclics/askolib/file/__init__.py#L34) for an example."
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  first
+        description: "Is this the first chunk"
+        type: boolean
+        required: true
+      - in: body
+        name:  last
+        description: "Is this the last chunk"
+        type: boolean
+        required: true
+      - in: body
+        name:  size
+        description: "File size, in bytes"
+        type: integer
+        required: true
+      - in: body
+        name:  name
+        description: "File name"
+        required: true
+      - in: body
+        name:  type
+        description: "File type (as a MIME type)"
+        required: true
+      - in: body
+        name:  chunk
+        description: "File chunk"
+        required: true
+      - in: body
+        name:  path
+        description: "AskOmics file path, returned after the first query to this endpoint"
+        required: false
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              path:
+                type: string
+                description: "File internal path"
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Missing parameters or exceeded quota"
+      security:
+      - api_key: []
+
+  /files/upload_url:
+    post:
+      tags:
+      - "Files"
+      summary: "Request upload from a remote url"
+      description: "Request a file upload from a remote file link"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  url
+        description: "Remote url"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Missing parameters or exceeded quota"
+      security:
+      - api_key: []
+
+  /files/preview:
+    post:
+      tags:
+      - "Files"
+      summary: "Get files previews"
+      description: "Get files previews (response depends on the file type)"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  filesId
+        description: "Files Ids"
+        type: array
+        required: true
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              previewFiles:
+                type: array
+                description: Array of previews for requested files Ids
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Missing filesId parameter, or requested files are not integrable"
+      security:
+      - api_key: []
+
+  /files/delete:
+    post:
+      tags:
+      - "Files"
+      summary: "Delete files"
+      description: "Delete selected files"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  filesIdToDelete
+        description: "Files Ids to delete"
+        type: array
+        required: true
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              files:
+                type: array
+                description: Remaining files
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Missing filesIdToDelete parameter"
+      security:
+      - api_key: []
+
+  /files/integrate:
+    post:
+      tags:
+      - "Files"
+      summary: "Integrate files"
+      description: "Integrate selected files"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  fileId
+        description: "Id of the file to integrate"
+        type: string
+        required: true
+      - in: body
+        name:  public
+        description: "Set the dataset public? (Restricted to admin users)"
+        type: boolean
+        required: false
+      - in: body
+        name:  externalEndpoint
+        description: "External endpoint, for RDF files"
+        type: string
+        required: false
+      - in: body
+        name:  externalGraph
+        description: "External graph, for RDF files"
+        type: string
+        required: false
+      - in: body
+        name:  customUri
+        description: "Custom URI, for non-RDF files"
+        type: string
+        required: false
+      - in: body
+        name:  column_types
+        description: "List of column type (for CSV files)"
+        type: array
+        required: false
+      - in: body
+        name:  header_names
+        description: "List of column names (for CSV files)"
+        type: array
+        required: false
+      - in: body
+        name:  entities
+        description: "List of entity names (for GFF files)"
+        type: array
+        required: false
+      - in: body
+        name:  entity_name
+        description: "Entity name (for BED files)"
+        type: string
+        required: false
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              dataset_ids:
+                type: array
+                description: Generated dataset ids
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Missing fileId parameter, or integration disabled in this AskOmics instance"
+      security:
+      - api_key: []
+
+  /files/ttl/{user_id}/{username}/{path}:
+    get:
+      tags:
+      - "Files"
+      summary: "Get a static ttl file"
+      description: "Get a downloadable ttl file"
+      produces:
+      - "application/json"
+      parameters:
+      - in: path
+        name:  user_id
+        description: "User ID of the file owner"
+        type: string
+        required: true
+      - in: path
+        name:  username
+        description: "Username of the file owner"
+        type: string
+        required: true
+      - in: path
+        name:  path
+        description: "File name to load"
+        type: string
+        required: true
+      - in: query
+        name:  key
+        description: "API key, passed as a query parameter for virtuoso loading"
+        type: string
+        required: false
+      responses:
+        200:
+          description: "Successful request"
+          content:
+            description: "A ttl file"
+            text/turtle:
+              schema:
+                type: string
+                format: binary
+        401:
+          description: "Login required / invalid account / blocked account"
+      security:
+      - api_key: []
+  /files/colums:
+    get:
+      tags:
+      - "Files"
+      summary: "Get available column types for CSV files"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              types:
+                type: array
+                description: List of column types
+  /datasets:
+    get:
+      tags:
+      - "Datasets"
+      summary: "Get all datasets for user"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              datasets:
+                type: array
+                description: List of datasets
+                items:
+                  type: "object"
+                  properties:
+                    name:
+                      type: "string"
+                      description: "Dataset name"
+                    id:
+                      type: "integer"
+                      description: "Dataset ID"
+                    start:
+                      type: "integer"
+                      description: "Unix time of the start of the integration"
+                    end:
+                      type: "integer"
+                      description: "Unix time of the end of the integration"
+                    exec_time:
+                      type: "integer"
+                      description: "Integration time"
+                    ntriples:
+                      type: "integer"
+                      description: "Number of generater triples"
+                    ontology:
+                      type: "integer"
+                      description: "Is the dataset an ontology? (0 or 1)"
+                    public:
+                      type: "boolean"
+                      description: "Is the dataset public?"
+                    percent:
+                      type: "integer"
+                      description: "% of the file integrated"
+                    status:
+                      type: "string"
+                      description: "Dataset status"
+                    error_message:
+                      type: "string"
+                      description: "Error message"
+                    traceback:
+                      type: "string"
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+  /datasets/delete:
+    post:
+      tags:
+      - "Datasets"
+      summary: "Delete datasets"
+      description: "Delete selected datasets"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  datasetsIdToDelete
+        description: "Datasets Ids to delete"
+        type: array
+        required: true
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              datasets:
+                type: array
+                description: Remaining datasets
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Missing datasetsIdToDelete parameter"
+      security:
+      - api_key: []
+
+  /datasets/public:
+    post:
+      tags:
+      - "Datasets"
+      summary: "Toggle public status of a dataset"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  id
+        description: "Dataset ID to toggle"
+        type: string
+        required: true
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            properties:
+              datasets:
+                type: array
+                description: Array of datasets
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Incorrect parameters"
+      security:
+      - api_key: []
+
 securityDefinitions:
   api_key:
     type: "apiKey"
