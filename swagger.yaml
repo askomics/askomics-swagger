@@ -637,6 +637,136 @@ paths:
       security:
       - api_key: []
 
+  /sparql/init
+    get:
+      tags:
+      - "Sparql"
+      summary: "Get default query"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            items:
+              defaultQuery:
+                type: string
+                description: Default query
+              graphs:
+                type: array
+                description: List of available graphs
+              endpoints:
+                type: array
+                description: List of available endpoints
+              diskSpace:
+                type: integer
+                description: Available disk space for user
+              console_enabled:
+                type: boolean
+                description: Is the sparql console enabled for the current user?
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+      security:
+      - api_key: []
+
+  /sparql/previewquery
+    post:
+      tags:
+      - "Sparql"
+      summary: "Get preview for query"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  query
+        description: "Sparql query"
+        required: true
+      - in: body
+        name:  graphs
+        description: "List of graphs to use"
+        schema:
+          type: array
+        required: false
+      - in: body
+        name:  endpoints
+        description: "List of endpoints to use"
+        schema:
+          type: array
+        required: false
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            items:
+              headers:
+                type: array
+                description: Results headers
+              data:
+                type: string
+                description: Result data (csv)
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Incorrect parameters"
+        401:
+          description: "Sparql console is disabled for current user"
+      security:
+      - api_key: []
+
+  /sparql/savequery
+    post:
+      tags:
+      - "Sparql"
+      summary: "Send query to backend"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: body
+        name:  query
+        description: "Sparql query"
+        required: true
+      - in: body
+        name:  graphs
+        description: "List of graphs to use"
+        schema:
+          type: array
+        required: false
+      - in: body
+        name:  endpoints
+        description: "List of endpoints to use"
+        schema:
+          type: array
+        required: false
+      responses:
+        200:
+          description: "Successful request"
+          schema:
+            type: object
+            items:
+              result_id:
+                type: integer
+                description: ID of the generated result object
+              error:
+                type: boolean
+              errorMessage:
+                type: string
+        400:
+          description: "Incorrect parameters"
+        401:
+          description: Sparql console is disabled for current user
+      security:
+      - api_key: []
+
 securityDefinitions:
   api_key:
     type: "apiKey"
