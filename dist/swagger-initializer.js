@@ -1,3 +1,15 @@
+const DisableTryItOutPlugin = function() {
+  return {
+    statePlugins: {
+      spec: {
+        wrapSelectors: {
+          allowTryItOutFor: () => () => false
+        }
+      }
+    }
+  }
+}
+
 window.onload = function() {
   //<editor-fold desc="Changeable Configuration Block">
 
@@ -11,9 +23,16 @@ window.onload = function() {
       SwaggerUIStandalonePreset
     ],
     plugins: [
-      SwaggerUIBundle.plugins.DownloadUrl
+      SwaggerUIBundle.plugins.DownloadUrl,
+      DisableTryItOutPlugin
     ],
-    layout: "StandaloneLayout"
+    layout: "StandaloneLayout",
+    onComplete: function () {
+        var lockedIcon = document.querySelector(".svg-assets defs symbol#locked");
+        var unlockedIcon = document.querySelector(".svg-assets defs symbol#unlocked");
+        lockedIcon.id = "unlocked";
+        unlockedIcon.id = "locked";
+      },
   });
 
   //</editor-fold>

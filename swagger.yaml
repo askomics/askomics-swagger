@@ -140,7 +140,7 @@ paths:
                     status:
                       type: "string"
                     type:
-                      type: string
+                      type: "string"
                       description: "File type"
               diskSpace:
                 type: "integer"
@@ -231,15 +231,17 @@ paths:
       parameters:
       - in: body
         name:  first
-        description: "Is this the first chunk"
+        description: "Is this the first chunk. Should be a boolean"
         schema:
-          type: boolean
+          type: string
+          example: "true"
         required: true
       - in: body
         name:  last
-        description: "Is this the last chunk"
+        description: "Is this the last chunk. Should be a boolean"
         schema:
-          type: boolean
+          type: string
+          example: "true"
         required: true
       - in: body
         name:  size
@@ -486,10 +488,9 @@ paths:
       responses:
         200:
           description: "Successful request"
-          content:
+          schema:
             description: "A ttl file"
-            schema:
-              type: file
+            type: file
         401:
           description: "Login required / invalid account / blocked account"
       security:
