@@ -495,7 +495,7 @@ paths:
           description: "Login required / invalid account / blocked account"
       security:
       - api_key: []
-  /files/colums:
+  /files/columns:
     get:
       tags:
       - "Files"
