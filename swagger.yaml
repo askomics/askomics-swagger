@@ -637,7 +637,7 @@ paths:
       security:
       - api_key: []
 
-  /sparql/init
+  /sparql/init:
     get:
       tags:
       - "Sparql"
@@ -672,7 +672,7 @@ paths:
       security:
       - api_key: []
 
-  /sparql/previewquery
+  /sparql/previewquery:
     post:
       tags:
       - "Sparql"
@@ -721,7 +721,7 @@ paths:
       security:
       - api_key: []
 
-  /sparql/savequery
+  /sparql/savequery:
     post:
       tags:
       - "Sparql"
